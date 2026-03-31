@@ -22,9 +22,12 @@ import type {
   AgencyFilters,
 } from '@/types';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 // Auth Store
 interface AuthState {
   user: User | null;
+  token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
@@ -38,53 +41,90 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       user: null,
+      token: null,
       isAuthenticated: false,
       isLoading: false,
       
-      login: async (email, _password) => {
+      login: async (email, password) => {
         set({ isLoading: true });
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Mock login - in real app, this would validate against backend
-        const mockUser: User = {
-          id: '1',
-          email,
-          name: 'Demo User',
-          role: 'model',
-          balance: 25,
-          subscriptionType: 'free',
-          isVerified: true,
-          isEmailVerified: true,
-          createdAt: new Date(),
-        };
-        
-        set({ user: mockUser, isAuthenticated: true, isLoading: false });
-        return true;
+        try {
+          const response = await fetch(`${API_URL}/api/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+          });
+
+          if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.error || 'Login failed');
+          }
+
+          const data = await response.json();
+          
+          const user: User = {
+            ...data.user,
+            balance: 0,
+            subscriptionType: 'free',
+            isVerified: true,
+            isEmailVerified: true,
+            createdAt: new Date(),
+          };
+
+          set({ 
+            user, 
+            token: data.token,
+            isAuthenticated: true, 
+            isLoading: false 
+          });
+          return true;
+        } catch (error) {
+          console.error('Login error:', error);
+          set({ isLoading: false });
+          return false;
+        }
       },
       
-      register: async (email, _password, role, name) => {
+      register: async (email, password, role, name) => {
         set({ isLoading: true });
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        const mockUser: User = {
-          id: Math.random().toString(36).substr(2, 9),
-          email,
-          name,
-          role,
-          balance: 0,
-          subscriptionType: 'free',
-          isVerified: false,
-          isEmailVerified: false,
-          createdAt: new Date(),
-        };
-        
-        set({ user: mockUser, isAuthenticated: true, isLoading: false });
-        return true;
+        try {
+          const response = await fetch(`${API_URL}/api/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, role, name }),
+          });
+
+          if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.error || 'Registration failed');
+          }
+
+          const data = await response.json();
+          
+          const user: User = {
+            ...data.user,
+            balance: 0,
+            subscriptionType: 'free',
+            isVerified: false,
+            isEmailVerified: false,
+            createdAt: new Date(),
+          };
+
+          set({ 
+            user, 
+            token: data.token,
+            isAuthenticated: true, 
+            isLoading: false 
+          });
+          return true;
+        } catch (error) {
+          console.error('Registration error:', error);
+          set({ isLoading: false });
+          return false;
+        }
       },
       
       logout: () => {
-        set({ user: null, isAuthenticated: false });
+        set({ user: null, token: null, isAuthenticated: false });
       },
       
       updateUser: (userData) => {
@@ -352,7 +392,7 @@ interface FavoritesState {
   isFavorite: (targetUserId: string) => boolean;
 }
 
-export const useFavoritesStore = create<FavoritesState>()((set) => ({
+export const useFavoritesStore = create<FavoritesState>()((set, get) => ({
   favorites: [],
   isLoading: false,
   
