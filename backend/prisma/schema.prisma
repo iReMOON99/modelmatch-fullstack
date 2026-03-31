@@ -1,5 +1,5 @@
 generator client {
-  provider   = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -13,15 +13,31 @@ enum UserRole {
   ADMIN
 }
 
+enum MessageType {
+  TEXT
+  IMAGE
+  STICKER
+  GIFT
+}
+
 model User {
   id            String         @id @default(cuid())
   email         String         @unique
   passwordHash  String
   role          UserRole
+  name          String?
+  avatarUrl     String?
+  balance       Int            @default(0)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   modelProfile  ModelProfile?
   agencyProfile AgencyProfile?
+  
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  
+  sentGifts     UserGift[] @relation("SentGifts")
+  receivedGifts UserGift[] @relation("ReceivedGifts")
 }
 
 model ModelProfile {
@@ -36,7 +52,7 @@ model ModelProfile {
   measurements String?
   bio          String?
   experience   String?
-  photoUrl     String?
+  photos       String[] @default([]) // Array of photo URLs
   isVerified   Boolean  @default(false)
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
@@ -57,4 +73,55 @@ model AgencyProfile {
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Message {
+  id         String      @id @default(cuid())
+  content    String?
+  type       MessageType @default(TEXT)
+  mediaUrl   String?     // URL for images, stickers
+  giftId     String?     // ID of the gift if type is GIFT
+  senderId   String
+  receiverId String
+  isRead     Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+
+  sender   User @relation("SentMessages", fields: [senderId], references: [id])
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  gift     Gift? @relation(fields: [giftId], references: [id])
+}
+
+model Gift {
+  id          String     @id @default(cuid())
+  name        String
+  imageUrl    String
+  price       Int
+  isActive    Boolean    @default(true)
+  messages    Message[]
+  userGifts   UserGift[]
+}
+
+model UserGift {
+  id         String   @id @default(cuid())
+  giftId     String
+  senderId   String
+  receiverId String
+  createdAt  DateTime @default(now())
+
+  gift     Gift @relation(fields: [giftId], references: [id])
+  sender   User @relation("SentGifts", fields: [senderId], references: [id])
+  receiver User @relation("ReceivedGifts", fields: [receiverId], references: [id])
+}
+
+model StickerPack {
+  id       String    @id @default(cuid())
+  name     String
+  stickers Sticker[]
+}
+
+model Sticker {
+  id          String      @id @default(cuid())
+  packId      String
+  imageUrl    String
+  pack        StickerPack @relation(fields: [packId], references: [id])
 }
