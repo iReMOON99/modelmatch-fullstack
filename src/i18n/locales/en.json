@@ -87,9 +87,8 @@
         "feature4": "Personal manager",
         "feature5": "Advanced analytics",
         "cta": "Contact Sales"
-      }
-    },
-    "cta": {
+      },
+      "cta": {
         "title": "Ready to Start Your Journey?",
         "subtitle": "Join thousands of models and agencies already connecting on ModelMatch",
         "button": "Create Free Account"
