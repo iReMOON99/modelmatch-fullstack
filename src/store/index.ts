@@ -413,10 +413,11 @@ interface MessagesState {
   fetchConversations: () => Promise<void>;
   fetchMessages: (conversationId: string) => Promise<void>;
   sendMessage: (receiverId: string, content: string, type?: Message['type'], mediaUrl?: string) => Promise<boolean>;
+  uploadChatImage: (file: File) => Promise<string | null>;
   setCurrentConversation: (conversation: Conversation | null) => void;
 }
 
-export const useMessagesStore = create<MessagesState>()((set) => ({
+export const useMessagesStore = create<MessagesState>()((set, get) => ({
   conversations: [],
   currentConversation: null,
   messages: [],
@@ -451,6 +452,31 @@ export const useMessagesStore = create<MessagesState>()((set) => ({
     }));
     
     return true;
+  },
+
+  uploadChatImage: async (file: File) => {
+    const token = useAuthStore.getState().token;
+    if (!token) return null;
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await fetch(`${API_URL}/api/messages/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error('Failed to upload chat image');
+      const data = await response.json();
+      return data.mediaUrl;
+    } catch (error) {
+      console.error('Chat image upload error:', error);
+      return null;
+    }
   },
   
   setCurrentConversation: (conversation) => set({ currentConversation: conversation }),

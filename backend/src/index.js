@@ -134,6 +134,18 @@ app.post('/api/user/avatar', authenticate, upload.single('avatar'), async (req, 
   }
 });
 
+app.post('/api/messages/upload', authenticate, upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image uploaded' });
+    }
+    res.json({ mediaUrl: req.file.path });
+  } catch (error) {
+    console.error('Chat image upload error:', error);
+    res.status(500).json({ error: 'Failed to upload image' });
+  }
+});
+
 app.get('/api/social/gifts', async (req, res) => {
   try {
     const gifts = await prisma.gift.findMany({ where: { isActive: true } });

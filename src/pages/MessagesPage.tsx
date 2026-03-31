@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   Search, 
   Send, 
@@ -10,7 +10,8 @@ import {
   CheckCheck,
   ArrowLeft,
   Gift as GiftIcon,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,19 +25,34 @@ import {
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { mockConversations, mockMessages, getUserById } from '@/data/mock';
-import { useSocialStore } from '@/store';
+import { useSocialStore, useMessagesStore } from '@/store';
 
 export function MessagesPage() {
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [messageText, setMessageText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   
   const { gifts, stickerPacks, fetchGifts, fetchStickers, sendGift } = useSocialStore();
+  const { uploadChatImage, sendMessage } = useMessagesStore();
 
   useEffect(() => {
     fetchGifts();
     fetchStickers();
   }, []);
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && otherUser?.id) {
+      setIsUploading(true);
+      const url = await uploadChatImage(file);
+      if (url) {
+        await sendMessage(otherUser.id, '', 'image', url);
+      }
+      setIsUploading(false);
+    }
+  };
 
   const conversations = mockConversations.map(conv => {
     const otherUserId = conv.participantIds.find(id => id !== 'current-user') || '';
@@ -199,7 +215,18 @@ export function MessagesPage() {
                             : 'bg-white text-gray-900 rounded-bl-none shadow-sm'
                         }`}
                       >
-                        <p>{message.content}</p>
+                        {message.type === 'image' && message.mediaUrl && (
+                          <div className="mb-2 rounded-lg overflow-hidden border border-black/10">
+                            <img src={message.mediaUrl} alt="Sent" className="max-w-full h-auto" />
+                          </div>
+                        )}
+                        {message.type === 'gift' && message.mediaUrl && (
+                          <div className="flex flex-col items-center p-4 bg-amber-50 rounded-lg mb-2">
+                            <img src={message.mediaUrl} alt="Gift" className="w-24 h-24 object-contain mb-2" />
+                            <p className="text-amber-900 font-bold text-center">{message.content}</p>
+                          </div>
+                        )}
+                        {message.content && message.type !== 'gift' && <p>{message.content}</p>}
                       </div>
                       <div className={`flex items-center gap-1 mt-1 text-xs text-gray-500 ${isOwn ? 'justify-end' : ''}`}>
                         {new Date(message.createdAt).toLocaleTimeString([], { 
@@ -278,9 +305,21 @@ export function MessagesPage() {
                 </PopoverContent>
               </Popover>
 
-              <Button variant="ghost" size="icon">
-                <ImageIcon className="w-5 h-5" />
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => imageInputRef.current?.click()}
+                disabled={isUploading}
+              >
+                {isUploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ImageIcon className="w-5 h-5" />}
               </Button>
+              <input
+                type="file"
+                ref={imageInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleImageUpload}
+              />
               
               <Input
                 placeholder="Type a message..."
