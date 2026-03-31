@@ -159,7 +159,7 @@ export const useAuthStore = create<AuthState>()(
           const data = await response.json();
           const currentUser = get().user;
           if (currentUser) {
-            set({ user: { ...currentUser, avatarUrl: data.avatarUrl } });
+            set({ user: { ...currentUser, avatar: data.avatarUrl } });
           }
           return data.avatarUrl;
         } catch (error) {
@@ -451,7 +451,7 @@ interface CatalogState {
   setAgencies: (agencies: User[]) => void;
 }
 
-export const useCatalogStore = create<CatalogState>()((set, get) => ({
+export const useCatalogStore = create<CatalogState>()((set) => ({
   models: [],
   agencies: [],
   modelFilters: {},
@@ -544,7 +544,7 @@ interface MessagesState {
   setCurrentConversation: (conversation: Conversation | null) => void;
 }
 
-export const useMessagesStore = create<MessagesState>()((set, get) => ({
+export const useMessagesStore = create<MessagesState>()((set) => ({
   conversations: [],
   currentConversation: null,
   messages: [],
@@ -556,7 +556,7 @@ export const useMessagesStore = create<MessagesState>()((set, get) => ({
     set({ isLoading: false });
   },
   
-  fetchMessages: async (conversationId) => {
+  fetchMessages: async (_conversationId) => {
     set({ isLoading: true });
     await new Promise(resolve => setTimeout(resolve, 500));
     set({ isLoading: false });
@@ -581,7 +581,7 @@ export const useMessagesStore = create<MessagesState>()((set, get) => ({
     return true;
   },
 
-  uploadChatImage: async (file: File) => {
+  uploadChatImage: async (file) => {
     const token = useAuthStore.getState().token;
     if (!token) return null;
 
@@ -597,15 +597,15 @@ export const useMessagesStore = create<MessagesState>()((set, get) => ({
         body: formData,
       });
 
-      if (!response.ok) throw new Error('Failed to upload chat image');
+      if (!response.ok) throw new Error('Failed to upload image');
       const data = await response.json();
-      return data.mediaUrl;
+      return data.imageUrl;
     } catch (error) {
       console.error('Chat image upload error:', error);
       return null;
     }
   },
-  
+
   setCurrentConversation: (conversation) => set({ currentConversation: conversation }),
 }));
 
@@ -777,7 +777,7 @@ interface AdminState {
   respondToTicket: (ticketId: string, response: string) => Promise<boolean>;
 }
 
-export const useAdminStore = create<AdminState>()((set, get) => ({
+export const useAdminStore = create<AdminState>()((set) => ({
   stats: null,
   users: [],
   transactions: [],
@@ -824,15 +824,15 @@ export const useAdminStore = create<AdminState>()((set, get) => ({
     set({ isLoading: false });
   },
   
-  updateUserStatus: async (userId, status) => {
+  updateUserStatus: async (_userId, _status) => {
     return true;
   },
   
-  verifyUser: async (userId) => {
+  verifyUser: async (_userId) => {
     return true;
   },
   
-  respondToTicket: async (ticketId, response) => {
+  respondToTicket: async (_ticketId, _response) => {
     return true;
   },
 }));

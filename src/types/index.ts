@@ -160,6 +160,10 @@ export interface Message {
   content: string;
   createdAt: Date;
   isRead: boolean;
+  type?: 'text' | 'image' | 'gift' | 'sticker';
+  mediaUrl?: string;
+  giftId?: string;
+  stickerId?: string;
 }
 
 // Chat conversation
