@@ -260,6 +260,8 @@ app.put('/api/user/profile', authenticate, async (req, res) => {
   const { name, modelProfile, agencyProfile } = req.body;
   const userId = req.user.userId;
 
+  console.log('Updating profile for user:', userId, { name, modelProfile, agencyProfile });
+
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -277,17 +279,29 @@ app.put('/api/user/profile', authenticate, async (req, res) => {
     if (name) updateData.name = name;
 
     if (user.role === 'MODEL') {
+      const sanitizedProfile = { ...modelProfile };
+      delete sanitizedProfile.userId;
+      delete sanitizedProfile.updatedAt;
+      
+      console.log('Sanitized Model Profile:', sanitizedProfile);
+
       updateData.modelProfile = {
         upsert: {
-          create: modelProfile || {},
-          update: modelProfile || {}
+          create: sanitizedProfile,
+          update: sanitizedProfile
         }
       };
     } else if (user.role === 'AGENCY') {
+      const sanitizedProfile = { ...agencyProfile };
+      delete sanitizedProfile.userId;
+      delete sanitizedProfile.updatedAt;
+
+      console.log('Sanitized Agency Profile:', sanitizedProfile);
+
       updateData.agencyProfile = {
         upsert: {
-          create: agencyProfile || {},
-          update: agencyProfile || {}
+          create: sanitizedProfile,
+          update: sanitizedProfile
         }
       };
     }
@@ -301,6 +315,8 @@ app.put('/api/user/profile', authenticate, async (req, res) => {
       }
     });
 
+    console.log('Profile updated successfully for:', updatedUser.email);
+
     res.json({
       id: updatedUser.id,
       email: updatedUser.email,
@@ -313,7 +329,7 @@ app.put('/api/user/profile', authenticate, async (req, res) => {
     });
   } catch (error) {
     console.error('Update profile error:', error);
-    res.status(500).json({ error: 'Failed to update profile' });
+    res.status(500).json({ error: 'Failed to update profile: ' + error.message });
   }
 });
 

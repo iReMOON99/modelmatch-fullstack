@@ -154,9 +154,13 @@ export function ProfilePage() {
     setShowEditDialog(true);
   };
 
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
   const handleSaveProfile = async () => {
     const success = await updateProfile(editData);
     if (success) {
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
       setShowEditDialog(false);
     }
   };
@@ -274,7 +278,15 @@ export function ProfilePage() {
             </div>
             <div className="flex-1 text-white pb-2">
               <div className="flex items-center gap-2 mb-1">
-                <h1 className="text-2xl lg:text-3xl font-bold">{user.name}</h1>
+                {isOwnProfile ? (
+                  <Input 
+                    className="text-2xl lg:text-3xl font-bold bg-transparent border-none focus:ring-0 p-0 h-auto w-full max-w-md text-white"
+                    value={editData.name || ''}
+                    onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                  />
+                ) : (
+                  <h1 className="text-2xl lg:text-3xl font-bold">{user.name}</h1>
+                )}
                 {user.isVerified && (
                   <Badge className="bg-blue-500">
                     <CheckCircle2 className="w-3 h-3 mr-1" />
@@ -314,12 +326,12 @@ export function ProfilePage() {
                   </div>
                 </div>
                 <Button 
-                  className="bg-amber-600 hover:bg-amber-700 text-white px-8"
+                  className={`${saveSuccess ? 'bg-green-600 hover:bg-green-700' : 'bg-amber-600 hover:bg-amber-700'} text-white px-8 transition-colors`}
                   onClick={handleSaveProfile}
                   disabled={isProfileLoading}
                 >
-                  {isProfileLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
-                  Сохранить все изменения
+                  {isProfileLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : saveSuccess ? <CheckCircle2 className="w-4 h-4 mr-2" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
+                  {saveSuccess ? 'Сохранено!' : 'Сохранить все изменения'}
                 </Button>
               </div>
             </CardContent>
