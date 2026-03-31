@@ -28,11 +28,11 @@ export function LoginPage() {
       return;
     }
 
-    const success = await login(formData.email, formData.password);
-    if (success) {
+    const result = await login(formData.email, formData.password);
+    if (result.success) {
       navigate('/dashboard');
     } else {
-      setError('Invalid email or password');
+      setError(result.error || 'Invalid email or password');
     }
   };
 

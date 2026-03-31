@@ -30,8 +30,8 @@ interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (email: string, password: string, role: UserRole, name: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  register: (email: string, password: string, role: UserRole, name: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   updateUser: (user: Partial<User>) => void;
   setLoading: (loading: boolean) => void;
@@ -55,12 +55,11 @@ export const useAuthStore = create<AuthState>()(
             body: JSON.stringify({ email, password }),
           });
 
+          const data = await response.json();
+
           if (!response.ok) {
-            const data = await response.json();
             throw new Error(data.error || 'Login failed');
           }
-
-          const data = await response.json();
           
           const user: User = {
             ...data.user,
@@ -85,11 +84,11 @@ export const useAuthStore = create<AuthState>()(
             useProfileStore.getState().setAgencyProfile(data.user.agencyProfile);
           }
           
-          return true;
-        } catch (error) {
+          return { success: true };
+        } catch (error: any) {
           console.error('Login error:', error);
           set({ isLoading: false });
-          return false;
+          return { success: false, error: error.message };
         }
       },
       
@@ -102,12 +101,11 @@ export const useAuthStore = create<AuthState>()(
             body: JSON.stringify({ email, password, role, name }),
           });
 
+          const data = await response.json();
+
           if (!response.ok) {
-            const data = await response.json();
             throw new Error(data.error || 'Registration failed');
           }
-
-          const data = await response.json();
           
           const user: User = {
             ...data.user,
@@ -132,11 +130,11 @@ export const useAuthStore = create<AuthState>()(
             useProfileStore.getState().setAgencyProfile(data.user.agencyProfile);
           }
           
-          return true;
-        } catch (error) {
+          return { success: true };
+        } catch (error: any) {
           console.error('Registration error:', error);
           set({ isLoading: false });
-          return false;
+          return { success: false, error: error.message };
         }
       },
       

@@ -44,11 +44,11 @@ export function RegisterPage() {
       return;
     }
 
-    const success = await register(formData.email, formData.password, selectedRole, formData.name);
-    if (success) {
+    const result = await register(formData.email, formData.password, selectedRole, formData.name);
+    if (result.success) {
       navigate('/dashboard');
     } else {
-      setError('Registration failed. Please try again.');
+      setError(result.error || t('auth.register.errors.failed'));
     }
   };
 

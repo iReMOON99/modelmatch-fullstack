@@ -285,7 +285,7 @@ export function DashboardPage() {
                 </div>
                 <Button 
                   className="w-full mt-4 bg-amber-500 hover:bg-amber-600"
-                  onClick={() => navigate('/profile')}
+                  onClick={() => navigate(`/profile/${user.id}`)}
                 >
                   Edit Profile
                 </Button>

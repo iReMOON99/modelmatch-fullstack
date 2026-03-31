@@ -145,7 +145,7 @@ export function Layout({ children }: LayoutProps) {
                   <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => navigate('/profile')}>
+                    <DropdownMenuItem onClick={() => navigate(`/profile/${user.id}`)}>
                       <User className="w-4 h-4 mr-2" />
                       Profile
                     </DropdownMenuItem>
