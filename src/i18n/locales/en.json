@@ -1,0 +1,27 @@
+{
+  "common": {
+    "login": "Sign In",
+    "register": "Get Started",
+    "logout": "Logout",
+    "features": "Features",
+    "howItWorks": "How it Works",
+    "pricing": "Pricing",
+    "imAModel": "I'm a Model",
+    "imAnAgency": "I'm an Agency",
+    "search": "Search",
+    "language": "Language"
+  },
+  "landing": {
+    "hero": {
+      "title": "Connect Models with",
+      "highlight": "Top Agencies",
+      "subtitle": "The premier marketplace where models find agencies and agencies discover talent. Verified profiles, direct connections, zero commissions.",
+      "stats": {
+        "activeModels": "Active Models",
+        "agencies": "Agencies",
+        "countries": "Countries",
+        "successfulMatches": "Successful Matches"
+      }
+    }
+  }
+}

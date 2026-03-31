@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { 
   Crown, 
   Users, 
@@ -11,13 +12,47 @@ import {
   CheckCircle2,
   Camera,
   MessageSquare,
-  Wallet
+  Wallet,
+  Languages
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+function LanguageSwitcher() {
+  const { i18n } = useTranslation();
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="w-9 h-9">
+          <Languages className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => changeLanguage('en')}>
+          English
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => changeLanguage('ru')}>
+          Русский
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 export function LandingPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const features = [
     {
@@ -47,10 +82,10 @@ export function LandingPage() {
   ];
 
   const stats = [
-    { value: '10K+', label: 'Active Models' },
-    { value: '500+', label: 'Agencies' },
-    { value: '50+', label: 'Countries' },
-    { value: '25K+', label: 'Successful Matches' },
+    { value: '10K+', label: t('landing.hero.stats.activeModels') },
+    { value: '500+', label: t('landing.hero.stats.agencies') },
+    { value: '50+', label: t('landing.hero.stats.countries') },
+    { value: '25K+', label: t('landing.hero.stats.successfulMatches') },
   ];
 
   const howItWorks = [
@@ -153,19 +188,20 @@ export function LandingPage() {
               <span className="text-xl font-bold">ModelMatch</span>
             </div>
             <div className="hidden md:flex items-center gap-8">
-              <a href="#features" className="text-sm text-gray-600 hover:text-gray-900">Features</a>
-              <a href="#how-it-works" className="text-sm text-gray-600 hover:text-gray-900">How it Works</a>
-              <a href="#pricing" className="text-sm text-gray-600 hover:text-gray-900">Pricing</a>
+              <a href="#features" className="text-sm text-gray-600 hover:text-gray-900">{t('common.features')}</a>
+              <a href="#how-it-works" className="text-sm text-gray-600 hover:text-gray-900">{t('common.howItWorks')}</a>
+              <a href="#pricing" className="text-sm text-gray-600 hover:text-gray-900">{t('common.pricing')}</a>
             </div>
             <div className="flex items-center gap-3">
+              <LanguageSwitcher />
               <Button variant="ghost" onClick={() => navigate('/login')}>
-                Sign In
+                {t('common.login')}
               </Button>
               <Button 
                 onClick={() => navigate('/register')}
                 className="bg-amber-500 hover:bg-amber-600"
               >
-                Get Started
+                {t('common.register')}
               </Button>
             </div>
           </div>
@@ -182,14 +218,13 @@ export function LandingPage() {
               Trusted by 10,000+ models and 500+ agencies
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              Connect Models with{' '}
+              {t('landing.hero.title')}{' '}
               <span className="bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
-                Top Agencies
+                {t('landing.hero.highlight')}
               </span>
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              The premier marketplace where models find agencies and agencies discover talent. 
-              Verified profiles, direct connections, zero commissions.
+              {t('landing.hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button 
@@ -198,7 +233,7 @@ export function LandingPage() {
                 className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-lg px-8"
               >
                 <Users className="w-5 h-5 mr-2" />
-                I'm a Model
+                {t('common.imAModel')}
               </Button>
               <Button 
                 size="lg" 
@@ -207,7 +242,7 @@ export function LandingPage() {
                 className="w-full sm:w-auto text-lg px-8"
               >
                 <Building2 className="w-5 h-5 mr-2" />
-                I'm an Agency
+                {t('common.imAnAgency')}
               </Button>
             </div>
           </div>
