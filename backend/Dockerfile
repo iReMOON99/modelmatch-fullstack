@@ -13,4 +13,5 @@ RUN npm run build
 
 EXPOSE 3001
 
-CMD ["npm", "start"]
+# Используем shell script для запуска миграций перед стартом сервера
+CMD npx prisma migrate deploy && npm start
