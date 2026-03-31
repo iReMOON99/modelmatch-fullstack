@@ -57,26 +57,26 @@ export function LandingPage() {
   const features = [
     {
       icon: Users,
-      title: 'For Models',
-      description: 'Create your portfolio, connect with top agencies, and find your next big opportunity.',
+      title: t('landing.features.forModels.title'),
+      description: t('landing.features.forModels.description'),
       color: 'bg-pink-500',
     },
     {
       icon: Building2,
-      title: 'For Agencies',
-      description: 'Discover fresh talent, manage castings, and streamline your booking process.',
+      title: t('landing.features.forAgencies.title'),
+      description: t('landing.features.forAgencies.description'),
       color: 'bg-blue-500',
     },
     {
       icon: Zap,
-      title: 'Instant Connections',
-      description: 'Direct messaging and contact exchange with verified industry professionals.',
+      title: t('landing.features.instantConnections.title'),
+      description: t('landing.features.instantConnections.description'),
       color: 'bg-amber-500',
     },
     {
       icon: Shield,
-      title: 'Verified Profiles',
-      description: 'All profiles are verified to ensure authentic connections in the industry.',
+      title: t('landing.features.verifiedProfiles.title'),
+      description: t('landing.features.verifiedProfiles.description'),
       color: 'bg-green-500',
     },
   ];
@@ -91,20 +91,20 @@ export function LandingPage() {
   const howItWorks = [
     {
       step: '01',
-      title: 'Create Your Profile',
-      description: 'Sign up and build your portfolio with photos, measurements, and experience.',
+      title: t('landing.howItWorks.step1.title'),
+      description: t('landing.howItWorks.step1.description'),
       icon: Camera,
     },
     {
       step: '02',
-      title: 'Connect',
-      description: 'Browse and connect with models or agencies that match your criteria.',
+      title: t('landing.howItWorks.step2.title'),
+      description: t('landing.howItWorks.step2.description'),
       icon: MessageSquare,
     },
     {
       step: '03',
-      title: 'Collaborate',
-      description: 'Exchange contacts, discuss opportunities, and start working together.',
+      title: t('landing.howItWorks.step3.title'),
+      description: t('landing.howItWorks.step3.description'),
       icon: Wallet,
     },
   ];
@@ -113,66 +113,66 @@ export function LandingPage() {
     {
       name: 'Anna Petrova',
       role: 'Fashion Model',
-      content: 'ModelMatch helped me find my dream agency in just two weeks. The platform is incredibly easy to use!',
+      content: t('landing.testimonials.anna'),
       avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
     },
     {
       name: 'James Wilson',
       role: 'Agency Director',
-      content: 'We\'ve discovered amazing talent through this platform. The verification system gives us confidence.',
+      content: t('landing.testimonials.james'),
       avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop',
     },
     {
       name: 'Maria Garcia',
       role: 'Commercial Model',
-      content: 'The micro-payment system is perfect. I only pay for what I need, when I need it.',
+      content: t('landing.testimonials.maria'),
       avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop',
     },
   ];
 
   const pricingPlans = [
     {
-      name: 'Free',
+      name: t('landing.pricing.free.name'),
       price: 0,
       period: 'forever',
-      description: 'Perfect for getting started',
+      description: t('landing.pricing.free.description'),
       features: [
-        '15 profile views per day',
-        '1 request per week',
-        'Basic search filters',
-        'Public profile',
+        t('landing.pricing.free.feature1'),
+        t('landing.pricing.free.feature2'),
+        t('landing.pricing.free.feature3'),
+        t('landing.pricing.free.feature4'),
       ],
-      cta: 'Get Started',
+      cta: t('landing.pricing.free.cta'),
       popular: false,
     },
     {
-      name: 'Model Plus',
+      name: t('landing.pricing.plus.name'),
       price: 29,
       period: 'month',
-      description: 'For serious models',
+      description: t('landing.pricing.plus.description'),
       features: [
-        'Unlimited profile views',
-        '10 contacts per month',
-        'Priority in search',
-        'Profile statistics',
-        'No daily limits',
+        t('landing.pricing.plus.feature1'),
+        t('landing.pricing.plus.feature2'),
+        t('landing.pricing.plus.feature3'),
+        t('landing.pricing.plus.feature4'),
+        t('landing.pricing.plus.feature5'),
       ],
-      cta: 'Start Free Trial',
+      cta: t('landing.pricing.plus.cta'),
       popular: true,
     },
     {
-      name: 'Agency Pro',
+      name: t('landing.pricing.pro.name'),
       price: 99,
       period: 'month',
-      description: 'For professional agencies',
+      description: t('landing.pricing.pro.description'),
       features: [
-        'Everything in Model Plus',
-        'Mass messaging (100/month)',
-        'API access',
-        'Personal manager',
-        'Advanced analytics',
+        t('landing.pricing.pro.feature1'),
+        t('landing.pricing.pro.feature2'),
+        t('landing.pricing.pro.feature3'),
+        t('landing.pricing.pro.feature4'),
+        t('landing.pricing.pro.feature5'),
       ],
-      cta: 'Contact Sales',
+      cta: t('landing.pricing.pro.cta'),
       popular: false,
     },
   ];
@@ -280,25 +280,22 @@ export function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 lg:py-32">
+      <section id="features" className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Everything You Need to Succeed
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Powerful features designed to connect talent with opportunity
-            </p>
+            <h2 className="text-3xl font-bold mb-4">{t('landing.features.title')}</h2>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-                <CardContent className="p-6">
-                  <div className={`w-12 h-12 rounded-xl ${feature.color} flex items-center justify-center mb-4`}>
+              <Card key={index} className="border-0 shadow-sm hover:shadow-md transition-shadow">
+                <CardContent className="p-8">
+                  <div className={`w-12 h-12 rounded-xl ${feature.color} flex items-center justify-center mb-6`}>
                     <feature.icon className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
+                  <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {feature.description}
+                  </p>
                 </CardContent>
               </Card>
             ))}
@@ -306,30 +303,29 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section id="how-it-works" className="py-20 lg:py-32 bg-gray-50">
+      {/* How it Works Section */}
+      <section id="how-it-works" className="py-24 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              How ModelMatch Works
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Get started in minutes and start making connections
-            </p>
+          <div className="text-center mb-20">
+            <h2 className="text-3xl font-bold mb-4">{t('landing.howItWorks.title')}</h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          
+          <div className="grid md:grid-cols-3 gap-12 relative">
+            {/* Connection Line */}
+            <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-0.5 bg-gray-100" />
+            
             {howItWorks.map((item, index) => (
-              <div key={index} className="relative">
-                <div className="text-6xl font-bold text-gray-200 absolute -top-4 -left-2">
-                  {item.step}
-                </div>
-                <div className="relative bg-white rounded-2xl p-8 shadow-lg">
-                  <div className="w-14 h-14 rounded-xl bg-amber-100 flex items-center justify-center mb-6">
-                    <item.icon className="w-7 h-7 text-amber-600" />
+              <div key={index} className="relative text-center group">
+                <div className="w-24 h-24 rounded-full bg-white border-4 border-amber-500/10 flex items-center justify-center mx-auto mb-8 relative z-10 group-hover:border-amber-500/30 transition-colors">
+                  <item.icon className="w-10 h-10 text-amber-500" />
+                  <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center">
+                    {item.step}
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{item.title}</h3>
-                  <p className="text-gray-600">{item.description}</p>
                 </div>
+                <h3 className="text-xl font-bold mb-4">{item.title}</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  {item.description}
+                </p>
               </div>
             ))}
           </div>
@@ -337,45 +333,51 @@ export function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 lg:py-32">
+      <section id="pricing" className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Simple, Transparent Pricing
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Start free, upgrade when you need more
-            </p>
+            <h2 className="text-3xl font-bold mb-4">{t('landing.pricing.title')}</h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+
+          <div className="grid md:grid-cols-3 gap-8">
             {pricingPlans.map((plan, index) => (
               <Card 
                 key={index} 
-                className={`relative border-2 ${plan.popular ? 'border-amber-500' : 'border-gray-200'} overflow-hidden`}
+                className={`border-0 shadow-lg relative overflow-hidden ${
+                  plan.popular ? 'ring-2 ring-amber-500 scale-105 z-10' : ''
+                }`}
               >
                 {plan.popular && (
-                  <div className="absolute top-0 right-0 bg-amber-500 text-white text-xs font-semibold px-3 py-1 rounded-bl-lg">
+                  <div className="absolute top-0 right-0 bg-amber-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider">
                     Most Popular
                   </div>
                 )}
                 <CardContent className="p-8">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{plan.name}</h3>
-                  <div className="flex items-baseline gap-1 mb-2">
-                    <span className="text-4xl font-bold text-gray-900">${plan.price}</span>
+                  <div className="mb-8">
+                    <h3 className="text-lg font-bold mb-1">{plan.name}</h3>
+                    <p className="text-sm text-gray-500">{plan.description}</p>
+                  </div>
+                  
+                  <div className="flex items-baseline gap-1 mb-8">
+                    <span className="text-4xl font-bold">${plan.price}</span>
                     <span className="text-gray-500">/{plan.period}</span>
                   </div>
-                  <p className="text-gray-600 mb-6">{plan.description}</p>
-                  <ul className="space-y-3 mb-8">
-                    {plan.features.map((feature, fIndex) => (
-                      <li key={fIndex} className="flex items-start gap-2">
-                        <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-600 text-sm">{feature}</span>
+
+                  <ul className="space-y-4 mb-8">
+                    {plan.features.map((feature, i) => (
+                      <li key={i} className="flex items-center gap-3 text-sm text-gray-600">
+                        <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                        {feature}
                       </li>
                     ))}
                   </ul>
+
                   <Button 
-                    className={`w-full ${plan.popular ? 'bg-amber-500 hover:bg-amber-600' : ''}`}
-                    variant={plan.popular ? 'default' : 'outline'}
+                    className={`w-full ${
+                      plan.popular 
+                        ? 'bg-amber-500 hover:bg-amber-600 text-white' 
+                        : 'bg-white border-2 border-amber-500 text-amber-600 hover:bg-amber-50'
+                    }`}
                     onClick={() => navigate('/register')}
                   >
                     {plan.cta}
@@ -428,10 +430,10 @@ export function LandingPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="bg-gradient-to-r from-amber-500 to-orange-600 rounded-3xl p-12 text-white">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Ready to Start Your Journey?
+              {t('landing.cta.title')}
             </h2>
             <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">
-              Join thousands of models and agencies already connecting on ModelMatch
+              {t('landing.cta.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button 
@@ -440,7 +442,7 @@ export function LandingPage() {
                 onClick={() => navigate('/register')}
                 className="w-full sm:w-auto text-lg px-8"
               >
-                Create Free Account
+                {t('landing.cta.button')}
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </div>
@@ -458,41 +460,40 @@ export function LandingPage() {
                 <span className="text-lg font-bold">ModelMatch</span>
               </div>
               <p className="text-gray-400 text-sm">
-                Connecting talent with opportunity in the fashion industry.
+                {t('footer.about')}
               </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">For Models</h4>
+              <h4 className="font-semibold mb-4">{t('footer.forModels.title')}</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white">Create Profile</a></li>
-                <li><a href="#" className="hover:text-white">Find Agencies</a></li>
-                <li><a href="#" className="hover:text-white">Pricing</a></li>
+                <li><button onClick={() => navigate('/register')} className="hover:text-white">{t('footer.forModels.createProfile')}</button></li>
+                <li><button onClick={() => navigate('/models')} className="hover:text-white">{t('footer.forModels.findAgencies')}</button></li>
+                <li><a href="#pricing" className="hover:text-white">{t('footer.forModels.pricing')}</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">For Agencies</h4>
+              <h4 className="font-semibold mb-4">{t('footer.forAgencies.title')}</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white">Post Castings</a></li>
-                <li><a href="#" className="hover:text-white">Search Models</a></li>
-                <li><a href="#" className="hover:text-white">Enterprise</a></li>
+                <li><button onClick={() => navigate('/register')} className="hover:text-white">{t('footer.forAgencies.postCastings')}</button></li>
+                <li><button onClick={() => navigate('/models')} className="hover:text-white">{t('footer.forAgencies.searchModels')}</button></li>
+                <li><a href="#pricing" className="hover:text-white">{t('footer.forAgencies.enterprise')}</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Support</h4>
+              <h4 className="font-semibold mb-4">{t('footer.support.title')}</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white">Help Center</a></li>
-                <li><a href="#" className="hover:text-white">Contact Us</a></li>
-                <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
+                <li><a href="#" className="hover:text-white">{t('footer.support.helpCenter')}</a></li>
+                <li><a href="#" className="hover:text-white">{t('footer.support.contactUs')}</a></li>
+                <li><a href="#" className="hover:text-white">{t('footer.support.privacy')}</a></li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-400 text-sm">
-              © 2024 ModelMatch. All rights reserved.
+              {t('footer.rights')}
             </p>
             <div className="flex items-center gap-4">
-              <Globe className="w-5 h-5 text-gray-400" />
-              <span className="text-gray-400 text-sm">English</span>
+              <LanguageSwitcher />
             </div>
           </div>
         </div>

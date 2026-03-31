@@ -62,7 +62,7 @@ export function RegisterPage() {
           onClick={() => step === 1 ? navigate('/') : setStep(1)}
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          {step === 1 ? 'Back to home' : 'Back'}
+          {step === 1 ? t('auth.register.backToHome') : t('auth.register.back')}
         </Button>
 
         <Card className="border-0 shadow-xl">
@@ -73,12 +73,12 @@ export function RegisterPage() {
               </div>
             </div>
             <CardTitle className="text-2xl font-bold">
-              {step === 1 ? 'Create your account' : 'Choose your role'}
+              {step === 1 ? t('auth.register.title') : t('auth.register.step2')}
             </CardTitle>
             <CardDescription>
               {step === 1 
-                ? 'Start your journey in the fashion industry'
-                : 'Select how you want to use ModelMatch'}
+                ? t('auth.register.subtitle')
+                : t('auth.register.subtitleRole')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -107,13 +107,13 @@ export function RegisterPage() {
               {step === 1 ? (
                 <>
                   <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
+                    <Label htmlFor="name">{t('auth.register.fullName')}</Label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <Input
                         id="name"
                         type="text"
-                        placeholder="Your full name"
+                        placeholder={t('auth.register.fullNamePlaceholder')}
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         className="pl-10"
@@ -122,7 +122,7 @@ export function RegisterPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t('auth.register.email')}</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <Input
@@ -137,13 +137,13 @@ export function RegisterPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">{t('auth.register.password')}</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <Input
                         id="password"
                         type={showPassword ? 'text' : 'password'}
-                        placeholder="Create a password"
+                        placeholder={t('auth.register.passwordPlaceholder')}
                         value={formData.password}
                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                         className="pl-10 pr-10"
@@ -157,18 +157,18 @@ export function RegisterPage() {
                       </button>
                     </div>
                     <p className="text-xs text-gray-500">
-                      Must be at least 8 characters
+                      {t('auth.register.passwordHint')}
                     </p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirm Password</Label>
+                    <Label htmlFor="confirmPassword">{t('auth.register.confirmPassword')}</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <Input
                         id="confirmPassword"
                         type={showPassword ? 'text' : 'password'}
-                        placeholder="Confirm your password"
+                        placeholder={t('auth.register.confirmPasswordPlaceholder')}
                         value={formData.confirmPassword}
                         onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                         className="pl-10"
@@ -178,9 +178,9 @@ export function RegisterPage() {
 
                   <Button 
                     type="submit" 
-                    className="w-full bg-amber-500 hover:bg-amber-600"
+                    className="w-full bg-amber-500 hover:bg-amber-600 text-white"
                   >
-                    Continue
+                    {t('auth.register.continue')}
                   </Button>
                 </>
               ) : (
@@ -200,8 +200,8 @@ export function RegisterPage() {
                       }`}>
                         <Camera className={`w-7 h-7 ${selectedRole === 'model' ? 'text-white' : 'text-gray-500'}`} />
                       </div>
-                      <h3 className="font-semibold text-gray-900 mb-1">I'm a Model</h3>
-                      <p className="text-sm text-gray-500">Find agencies and opportunities</p>
+                      <h3 className="font-semibold text-gray-900 mb-1">{t('auth.register.imModel')}</h3>
+                      <p className="text-sm text-gray-500">{t('auth.register.findOpportunities')}</p>
                     </button>
 
                     <button
@@ -218,8 +218,8 @@ export function RegisterPage() {
                       }`}>
                         <Building2 className={`w-7 h-7 ${selectedRole === 'agency' ? 'text-white' : 'text-gray-500'}`} />
                       </div>
-                      <h3 className="font-semibold text-gray-900 mb-1">I'm an Agency</h3>
-                      <p className="text-sm text-gray-500">Discover and book talent</p>
+                      <h3 className="font-semibold text-gray-900 mb-1">{t('auth.register.imAgency')}</h3>
+                      <p className="text-sm text-gray-500">{t('auth.register.discoverTalent')}</p>
                     </button>
                   </div>
 
@@ -228,32 +228,32 @@ export function RegisterPage() {
                       <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
                       <span className="text-sm text-gray-600">
                         {selectedRole === 'model' 
-                          ? 'Create a professional portfolio to showcase your work'
-                          : 'Post castings and manage your talent roster'}
+                          ? t('auth.register.modelFeature1')
+                          : t('auth.register.agencyFeature1')}
                       </span>
                     </div>
                     <div className="flex items-start gap-2">
                       <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
                       <span className="text-sm text-gray-600">
                         {selectedRole === 'model'
-                          ? 'Connect directly with verified agencies worldwide'
-                          : 'Access our database of verified models'}
+                          ? t('auth.register.modelFeature2')
+                          : t('auth.register.agencyFeature2')}
                       </span>
                     </div>
                     <div className="flex items-start gap-2">
                       <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
                       <span className="text-sm text-gray-600">
-                        Free to join, pay only for premium features
+                        {t('auth.register.freeFeature')}
                       </span>
                     </div>
                   </div>
 
                   <Button 
                     type="submit" 
-                    className="w-full bg-amber-500 hover:bg-amber-600"
+                    className="w-full bg-amber-500 hover:bg-amber-600 text-white"
                     disabled={isLoading}
                   >
-                    {isLoading ? 'Creating account...' : 'Create Account'}
+                    {isLoading ? t('auth.register.creatingAccount') : t('auth.register.createAccount')}
                   </Button>
                 </>
               )}
@@ -261,9 +261,9 @@ export function RegisterPage() {
 
             {step === 1 && (
               <p className="text-center text-sm text-gray-600">
-                Already have an account?{' '}
+                {t('auth.register.alreadyHaveAccount')}{' '}
                 <Link to="/login" className="text-amber-600 hover:text-amber-700 font-medium">
-                  Sign in
+                  {t('auth.register.signIn')}
                 </Link>
               </p>
             )}
@@ -271,10 +271,10 @@ export function RegisterPage() {
         </Card>
 
         <p className="text-center text-xs text-gray-500 mt-6">
-          By creating an account, you agree to our{' '}
-          <Link to="/terms" className="text-amber-600 hover:underline">Terms of Service</Link>
-          {' '}and{' '}
-          <Link to="/privacy" className="text-amber-600 hover:underline">Privacy Policy</Link>
+          {t('auth.register.agreeTerms')}{' '}
+          <Link to="/terms" className="text-amber-600 hover:underline">{t('auth.register.terms')}</Link>
+          {' '}{t('auth.register.and')}{' '}
+          <Link to="/privacy" className="text-amber-600 hover:underline">{t('auth.register.privacy')}</Link>
         </p>
       </div>
     </div>

@@ -69,6 +69,7 @@ model AgencyProfile {
   description String?
   website     String?
   instagram   String?
+  photos      String[] @default([]) // Array of photo URLs
   isVerified  Boolean  @default(false)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())

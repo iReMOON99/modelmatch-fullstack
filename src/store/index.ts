@@ -77,6 +77,14 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: true, 
             isLoading: false 
           });
+          
+          // Also update profile store if data is available
+          if (data.user.modelProfile) {
+            useProfileStore.getState().setModelProfile(data.user.modelProfile);
+          } else if (data.user.agencyProfile) {
+            useProfileStore.getState().setAgencyProfile(data.user.agencyProfile);
+          }
+          
           return true;
         } catch (error) {
           console.error('Login error:', error);
@@ -116,6 +124,14 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: true, 
             isLoading: false 
           });
+
+          // Also update profile store if data is available
+          if (data.user.modelProfile) {
+            useProfileStore.getState().setModelProfile(data.user.modelProfile);
+          } else if (data.user.agencyProfile) {
+            useProfileStore.getState().setAgencyProfile(data.user.agencyProfile);
+          }
+          
           return true;
         } catch (error) {
           console.error('Registration error:', error);
@@ -276,16 +292,129 @@ interface ProfileState {
   modelProfile: ModelProfile | null;
   agencyProfile: AgencyProfile | null;
   isLoading: boolean;
+  fetchProfile: (userId: string) => Promise<any>;
+  updateProfile: (profileData: any) => Promise<boolean>;
+  uploadPhotos: (files: FileList) => Promise<string[] | null>;
   updateModelProfile: (profile: Partial<ModelProfile>) => void;
   updateAgencyProfile: (profile: Partial<AgencyProfile>) => void;
   setModelProfile: (profile: ModelProfile | null) => void;
   setAgencyProfile: (profile: AgencyProfile | null) => void;
 }
 
-export const useProfileStore = create<ProfileState>()((set) => ({
+export const useProfileStore = create<ProfileState>()((set, get) => ({
   modelProfile: null,
   agencyProfile: null,
   isLoading: false,
+
+  fetchProfile: async (userId: string) => {
+    set({ isLoading: true });
+    try {
+      const response = await fetch(`${API_URL}/api/user/profile/${userId}`);
+      if (!response.ok) throw new Error('Failed to fetch profile');
+      const data = await response.json();
+      
+      if (data.role === 'model') {
+        set({ modelProfile: data.modelProfile, agencyProfile: null });
+      } else {
+        set({ agencyProfile: data.agencyProfile, modelProfile: null });
+      }
+      return data;
+    } catch (error) {
+      console.error('Fetch profile error:', error);
+      return null;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  updateProfile: async (profileData: any) => {
+    const token = useAuthStore.getState().token;
+    if (!token) return false;
+
+    set({ isLoading: true });
+    try {
+      const response = await fetch(`${API_URL}/api/user/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(profileData),
+      });
+
+      if (!response.ok) throw new Error('Failed to update profile');
+      const data = await response.json();
+
+      if (data.role === 'model') {
+        set({ modelProfile: data.modelProfile });
+      } else {
+        set({ agencyProfile: data.agencyProfile });
+      }
+      
+      // Update name in auth store if changed
+      if (profileData.name) {
+        useAuthStore.getState().updateUser({ name: profileData.name });
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Update profile error:', error);
+      return false;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  uploadPhotos: async (files: FileList) => {
+    const token = useAuthStore.getState().token;
+    if (!token) return null;
+
+    set({ isLoading: true });
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append('photos', files[i]);
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/api/user/profile/photos`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error('Failed to upload photos');
+      const data = await response.json();
+      
+      // Update local state
+      const currentModel = get().modelProfile;
+      const currentAgency = get().agencyProfile;
+      
+      if (currentModel) {
+        set({ 
+          modelProfile: { 
+            ...currentModel, 
+            photos: [...(currentModel.photos || []), ...data.photoUrls] 
+          } 
+        });
+      } else if (currentAgency) {
+        set({ 
+          agencyProfile: { 
+            ...currentAgency, 
+            photos: [...(currentAgency.photos || []), ...data.photoUrls] 
+          } 
+        });
+      }
+      
+      return data.photoUrls;
+    } catch (error) {
+      console.error('Upload photos error:', error);
+      return null;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
   
   updateModelProfile: (profileData) => {
     set((state) => ({
@@ -544,7 +673,7 @@ interface FavoritesState {
   favorites: Favorite[];
   isLoading: boolean;
   addToFavorites: (targetUserId: string) => Promise<boolean>;
-  removeFromFavorites: (favoriteId: string) => Promise<boolean>;
+  removeFromFavorites: (targetUserId: string) => Promise<boolean>;
   fetchFavorites: () => Promise<void>;
   isFavorite: (targetUserId: string) => boolean;
 }
@@ -568,9 +697,9 @@ export const useFavoritesStore = create<FavoritesState>()((set, get) => ({
     return true;
   },
   
-  removeFromFavorites: async (favoriteId) => {
+  removeFromFavorites: async (targetUserId) => {
     set((state) => ({
-      favorites: state.favorites.filter(fav => fav.id !== favoriteId),
+      favorites: state.favorites.filter(fav => fav.targetUserId !== targetUserId),
     }));
     return true;
   },

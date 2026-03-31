@@ -3,6 +3,7 @@ import { Layout } from '@/components/Layout';
 import { LandingPage } from '@/pages/LandingPage';
 import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
+import { NotFoundPage } from '@/pages/NotFoundPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { ModelsPage } from '@/pages/ModelsPage';
 import { AgenciesPage } from '@/pages/AgenciesPage';
@@ -154,7 +155,7 @@ function App() {
         />
 
         {/* Catch all - 404 */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
   );

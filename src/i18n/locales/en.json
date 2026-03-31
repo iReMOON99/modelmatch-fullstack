@@ -22,6 +22,148 @@
         "countries": "Countries",
         "successfulMatches": "Successful Matches"
       }
+    },
+    "features": {
+      "title": "Everything You Need to Succeed",
+      "forModels": {
+        "title": "For Models",
+        "description": "Create your portfolio, connect with top agencies, and find your next big opportunity."
+      },
+      "forAgencies": {
+        "title": "For Agencies",
+        "description": "Discover fresh talent, manage castings, and streamline your booking process."
+      },
+      "instantConnections": {
+        "title": "Instant Connections",
+        "description": "Direct messaging and contact exchange with verified industry professionals."
+      },
+      "verifiedProfiles": {
+        "title": "Verified Profiles",
+        "description": "All profiles are verified to ensure authentic connections in the industry."
+      }
+    },
+    "howItWorks": {
+      "title": "How it Works",
+      "step1": {
+        "title": "Create Your Profile",
+        "description": "Sign up and build your portfolio with photos, measurements, and experience."
+      },
+      "step2": {
+        "title": "Connect",
+        "description": "Browse and connect with models or agencies that match your criteria."
+      },
+      "step3": {
+        "title": "Collaborate",
+        "description": "Exchange contacts, discuss opportunities, and start working together."
+      }
+    },
+    "pricing": {
+      "title": "Simple, Transparent Pricing",
+      "free": {
+        "name": "Free",
+        "description": "Perfect for getting started",
+        "feature1": "15 profile views per day",
+        "feature2": "1 request per week",
+        "feature3": "Basic search filters",
+        "feature4": "Public profile",
+        "cta": "Get Started"
+      },
+      "plus": {
+        "name": "Model Plus",
+        "description": "For serious models",
+        "feature1": "Unlimited profile views",
+        "feature2": "10 contacts per month",
+        "feature3": "Priority in search",
+        "feature4": "Profile statistics",
+        "feature5": "No daily limits",
+        "cta": "Start Free Trial"
+      },
+      "pro": {
+        "name": "Agency Pro",
+        "description": "For professional agencies",
+        "feature1": "Everything in Model Plus",
+        "feature2": "Mass messaging (100/month)",
+        "feature3": "API access",
+        "feature4": "Personal manager",
+        "feature5": "Advanced analytics",
+        "cta": "Contact Sales"
+      }
+    },
+    "cta": {
+        "title": "Ready to Start Your Journey?",
+        "subtitle": "Join thousands of models and agencies already connecting on ModelMatch",
+        "button": "Create Free Account"
+      },
+      "testimonials": {
+        "anna": "ModelMatch helped me find my dream agency in just two weeks. The platform is incredibly easy to use!",
+        "james": "We've discovered amazing talent through this platform. The verification system gives us confidence.",
+        "maria": "The micro-payment system is perfect. I only pay for what I need, when I need it."
+      }
     }
+  },
+  "auth": {
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Start your journey in the fashion industry",
+      "step1": "Your Info",
+      "step2": "Choose Role",
+      "fullName": "Full Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "continue": "Continue",
+      "alreadyHaveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "imModel": "I'm a Model",
+      "imAgency": "I'm an Agency",
+      "findOpportunities": "Find agencies and opportunities",
+      "discoverTalent": "Discover and book talent",
+      "createAccount": "Create Account",
+      "creatingAccount": "Creating account...",
+      "backToHome": "Back to home",
+      "back": "Back",
+      "subtitleRole": "Select how you want to use ModelMatch",
+      "fullNamePlaceholder": "Your full name",
+      "passwordPlaceholder": "Create a password",
+      "passwordHint": "Must be at least 8 characters",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "modelFeature1": "Create a professional portfolio to showcase your work",
+      "modelFeature2": "Connect directly with verified agencies worldwide",
+      "agencyFeature1": "Post castings and manage your talent roster",
+      "agencyFeature2": "Access our database of verified models",
+      "freeFeature": "Free to join, pay only for premium features",
+      "agreeTerms": "By creating an account, you agree to our",
+      "terms": "Terms of Service",
+      "and": "and",
+      "privacy": "Privacy Policy",
+      "errors": {
+        "fillAll": "Please fill in all fields",
+        "passwordsMatch": "Passwords do not match",
+        "passwordLength": "Password must be at least 8 characters",
+        "failed": "Registration failed. Please try again."
+      }
+    }
+  },
+  "footer": {
+    "about": "Connecting talent with opportunity in the fashion industry.",
+    "forModels": {
+      "title": "For Models",
+      "createProfile": "Create Profile",
+      "findAgencies": "Find Agencies",
+      "pricing": "Pricing"
+    },
+    "forAgencies": {
+      "title": "For Agencies",
+      "postCastings": "Post Castings",
+      "searchModels": "Search Models",
+      "enterprise": "Enterprise"
+    },
+    "support": {
+      "title": "Support",
+      "helpCenter": "Help Center",
+      "contactUs": "Contact Us",
+      "privacy": "Privacy Policy"
+    },
+    "rights": "© 2026 ModelMatch. All rights reserved."
   }
 }

@@ -51,13 +51,23 @@ app.post('/api/auth/register', async (req, res) => {
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
+    
+    // Create user and profile in a transaction
     const user = await prisma.user.create({
       data: {
         email,
         passwordHash,
         role: role.toUpperCase(),
-        name: name || email.split('@')[0]
+        name: name || email.split('@')[0],
+        ...(role.toLowerCase() === 'model' 
+          ? { modelProfile: { create: { displayName: name || email.split('@')[0] } } }
+          : { agencyProfile: { create: { companyName: name || email.split('@')[0] } } }
+        )
       },
+      include: {
+        modelProfile: true,
+        agencyProfile: true
+      }
     });
 
     const token = jwt.sign({ userId: user.id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
@@ -86,7 +96,13 @@ app.post('/api/auth/login', async (req, res) => {
   }
 
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ 
+      where: { email },
+      include: {
+        modelProfile: true,
+        agencyProfile: true
+      }
+    });
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -106,7 +122,9 @@ app.post('/api/auth/login', async (req, res) => {
         email: user.email,
         role: user.role.toLowerCase(),
         name: user.name,
-        avatarUrl: user.avatarUrl
+        avatarUrl: user.avatarUrl,
+        modelProfile: user.modelProfile,
+        agencyProfile: user.agencyProfile
       }
     });
   } catch (error) {
@@ -203,6 +221,140 @@ app.get('/api/social/stickers', async (req, res) => {
     res.json(packs);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch stickers' });
+  }
+});
+
+// Profile Endpoints
+app.get('/api/user/profile/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      include: {
+        modelProfile: true,
+        agencyProfile: true
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({
+      id: user.id,
+      email: user.email,
+      role: user.role.toLowerCase(),
+      name: user.name,
+      avatarUrl: user.avatarUrl,
+      balance: user.balance,
+      modelProfile: user.modelProfile,
+      agencyProfile: user.agencyProfile
+    });
+  } catch (error) {
+    console.error('Fetch profile error:', error);
+    res.status(500).json({ error: 'Failed to fetch profile' });
+  }
+});
+
+app.put('/api/user/profile', authenticate, async (req, res) => {
+  const { name, modelProfile, agencyProfile } = req.body;
+  const userId = req.user.userId;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        modelProfile: true,
+        agencyProfile: true
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const updateData = {};
+    if (name) updateData.name = name;
+
+    if (user.role === 'MODEL') {
+      updateData.modelProfile = {
+        upsert: {
+          create: modelProfile || {},
+          update: modelProfile || {}
+        }
+      };
+    } else if (user.role === 'AGENCY') {
+      updateData.agencyProfile = {
+        upsert: {
+          create: agencyProfile || {},
+          update: agencyProfile || {}
+        }
+      };
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+      include: {
+        modelProfile: true,
+        agencyProfile: true
+      }
+    });
+
+    res.json({
+      id: updatedUser.id,
+      email: updatedUser.email,
+      role: updatedUser.role.toLowerCase(),
+      name: updatedUser.name,
+      avatarUrl: updatedUser.avatarUrl,
+      balance: updatedUser.balance,
+      modelProfile: updatedUser.modelProfile,
+      agencyProfile: updatedUser.agencyProfile
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
+
+app.post('/api/user/profile/photos', authenticate, upload.array('photos', 10), async (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: 'No photos uploaded' });
+    }
+
+    const photoUrls = req.files.map(file => file.path);
+    const userId = req.user.userId;
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { modelProfile: true, agencyProfile: true }
+    });
+
+    if (user.role === 'MODEL') {
+      await prisma.modelProfile.update({
+        where: { userId },
+        data: {
+          photos: {
+            push: photoUrls
+          }
+        }
+      });
+    } else if (user.role === 'AGENCY') {
+      await prisma.agencyProfile.update({
+        where: { userId },
+        data: {
+          photos: {
+            push: photoUrls
+          }
+        }
+      });
+    }
+
+    res.json({ photoUrls });
+  } catch (error) {
+    console.error('Photos upload error:', error);
+    res.status(500).json({ error: 'Failed to upload photos' });
   }
 });
 
