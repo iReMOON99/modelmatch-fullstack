@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Search, 
   Send, 
@@ -8,19 +8,35 @@ import {
   Paperclip,
   Smile,
   CheckCheck,
-  ArrowLeft
+  ArrowLeft,
+  Gift as GiftIcon,
+  Image as ImageIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { mockConversations, mockMessages, getUserById } from '@/data/mock';
+import { useSocialStore } from '@/store';
 
 export function MessagesPage() {
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [messageText, setMessageText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  
+  const { gifts, stickerPacks, fetchGifts, fetchStickers, sendGift } = useSocialStore();
+
+  useEffect(() => {
+    fetchGifts();
+    fetchStickers();
+  }, []);
 
   const conversations = mockConversations.map(conv => {
     const otherUserId = conv.participantIds.find(id => id !== 'current-user') || '';
@@ -204,12 +220,68 @@ export function MessagesPage() {
           {/* Input Area */}
           <div className="p-4 bg-white border-t border-gray-200">
             <div className="flex items-center gap-2">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Smile className="w-5 h-5" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-0" side="top">
+                  <Tabs defaultValue="stickers">
+                    <TabsList className="w-full">
+                      <TabsTrigger value="stickers" className="flex-1">Stickers</TabsTrigger>
+                      <TabsTrigger value="gifts" className="flex-1">Gifts</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="stickers" className="p-2">
+                      <ScrollArea className="h-64">
+                        {stickerPacks.map(pack => (
+                          <div key={pack.id} className="mb-4">
+                            <h4 className="text-xs font-semibold text-gray-500 mb-2 px-1">{pack.name}</h4>
+                            <div className="grid grid-cols-4 gap-2">
+                              {pack.stickers.map(sticker => (
+                                <button
+                                  key={sticker.id}
+                                  className="aspect-square rounded-lg hover:bg-gray-100 p-1 transition-colors"
+                                  onClick={() => {
+                                    // Send sticker logic
+                                    console.log('Send sticker', sticker.id);
+                                  }}
+                                >
+                                  <img src={sticker.imageUrl} alt="Sticker" className="w-full h-full object-contain" />
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </ScrollArea>
+                    </TabsContent>
+                    <TabsContent value="gifts" className="p-2">
+                      <ScrollArea className="h-64">
+                        <div className="grid grid-cols-3 gap-2">
+                          {gifts.map(gift => (
+                            <button
+                              key={gift.id}
+                              className="flex flex-col items-center p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                              onClick={() => {
+                                if (otherUser?.id) sendGift(gift.id, otherUser.id);
+                              }}
+                            >
+                              <img src={gift.imageUrl} alt={gift.name} className="w-12 h-12 object-contain mb-1" />
+                              <span className="text-[10px] font-medium truncate w-full text-center">{gift.name}</span>
+                              <span className="text-[10px] text-amber-600 font-bold">${gift.price}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </ScrollArea>
+                    </TabsContent>
+                  </Tabs>
+                </PopoverContent>
+              </Popover>
+
               <Button variant="ghost" size="icon">
-                <Paperclip className="w-5 h-5" />
+                <ImageIcon className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="icon">
-                <Smile className="w-5 h-5" />
-              </Button>
+              
               <Input
                 placeholder="Type a message..."
                 value={messageText}

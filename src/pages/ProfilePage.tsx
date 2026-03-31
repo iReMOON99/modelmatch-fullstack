@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   MapPin, 
@@ -14,7 +14,9 @@ import {
   Wallet,
   Send,
   Crown,
-  ArrowLeft
+  ArrowLeft,
+  Camera,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -29,17 +31,37 @@ import type { UserRole } from '@/types';
 export function ProfilePage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user: currentUser } = useAuthStore();
+  const { user: currentUser, uploadAvatar } = useAuthStore();
   const { isFavorite, addToFavorites, removeFromFavorites } = useFavoritesStore();
   const { purchase } = useBalanceStore();
   
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [showRequestDialog, setShowRequestDialog] = useState(false);
   const [contactsRevealed, setContactsRevealed] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Get user data
   const user = id ? getUserById(id) : currentUser;
   const isOwnProfile = !id || id === currentUser?.id;
+
+  const handleAvatarClick = () => {
+    if (isOwnProfile && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setIsUploading(true);
+      const url = await uploadAvatar(file);
+      setIsUploading(false);
+      if (url) {
+        // Success feedback if needed
+      }
+    }
+  };
   
   if (!user) {
     return (
@@ -132,12 +154,40 @@ export function ProfilePage() {
         {/* Profile Info Overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-8">
           <div className="max-w-6xl mx-auto flex items-end gap-4">
-            <Avatar className="w-24 h-24 lg:w-32 lg:h-32 border-4 border-white">
-              <AvatarImage src={user.avatar} />
-              <AvatarFallback className="text-3xl bg-amber-500 text-white">
-                {user.name.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative group">
+              <Avatar 
+                className={`w-24 h-24 lg:w-32 lg:h-32 border-4 border-white ${isOwnProfile ? 'cursor-pointer' : ''}`}
+                onClick={handleAvatarClick}
+              >
+                <AvatarImage src={user.avatarUrl || user.avatar} />
+                <AvatarFallback className="text-3xl bg-amber-500 text-white">
+                  {user.name.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              
+              {isOwnProfile && (
+                <div 
+                  className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                  onClick={handleAvatarClick}
+                >
+                  {isUploading ? (
+                    <Loader2 className="w-8 h-8 text-white animate-spin" />
+                  ) : (
+                    <Camera className="w-8 h-8 text-white" />
+                  )}
+                </div>
+              )}
+              
+              {isOwnProfile && (
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+              )}
+            </div>
             <div className="flex-1 text-white pb-2">
               <div className="flex items-center gap-2 mb-1">
                 <h1 className="text-2xl lg:text-3xl font-bold">{user.name}</h1>

@@ -35,6 +35,7 @@ interface AuthState {
   logout: () => void;
   updateUser: (user: Partial<User>) => void;
   setLoading: (loading: boolean) => void;
+  uploadAvatar: (file: File) => Promise<string | null>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -63,7 +64,7 @@ export const useAuthStore = create<AuthState>()(
           
           const user: User = {
             ...data.user,
-            balance: 0,
+            balance: data.user.balance || 0,
             subscriptionType: 'free',
             isVerified: true,
             isEmailVerified: true,
@@ -123,6 +124,36 @@ export const useAuthStore = create<AuthState>()(
         }
       },
       
+      uploadAvatar: async (file: File) => {
+        const token = get().token;
+        if (!token) return null;
+
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        try {
+          const response = await fetch(`${API_URL}/api/user/avatar`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            body: formData,
+          });
+
+          if (!response.ok) throw new Error('Failed to upload avatar');
+          
+          const data = await response.json();
+          const currentUser = get().user;
+          if (currentUser) {
+            set({ user: { ...currentUser, avatarUrl: data.avatarUrl } });
+          }
+          return data.avatarUrl;
+        } catch (error) {
+          console.error('Avatar upload error:', error);
+          return null;
+        }
+      },
+
       logout: () => {
         set({ user: null, token: null, isAuthenticated: false });
       },
@@ -141,6 +172,104 @@ export const useAuthStore = create<AuthState>()(
     }
   )
 );
+
+// Social Store (Gifts & Stickers)
+interface Gift {
+  id: string;
+  name: string;
+  imageUrl: string;
+  price: number;
+}
+
+interface Sticker {
+  id: string;
+  imageUrl: string;
+}
+
+interface StickerPack {
+  id: string;
+  name: string;
+  stickers: Sticker[];
+}
+
+interface SocialState {
+  gifts: Gift[];
+  stickerPacks: StickerPack[];
+  isLoading: boolean;
+  fetchGifts: () => Promise<void>;
+  fetchStickers: () => Promise<void>;
+  sendGift: (giftId: string, receiverId: string) => Promise<boolean>;
+}
+
+export const useSocialStore = create<SocialState>()((set, get) => ({
+  gifts: [],
+  stickerPacks: [],
+  isLoading: false,
+
+  fetchGifts: async () => {
+    set({ isLoading: true });
+    try {
+      const response = await fetch(`${API_URL}/api/social/gifts`);
+      if (response.ok) {
+        const data = await response.json();
+        set({ gifts: data });
+      }
+    } catch (error) {
+      console.error('Fetch gifts error:', error);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  fetchStickers: async () => {
+    set({ isLoading: true });
+    try {
+      const response = await fetch(`${API_URL}/api/social/stickers`);
+      if (response.ok) {
+        const data = await response.json();
+        set({ stickerPacks: data });
+      }
+    } catch (error) {
+      console.error('Fetch stickers error:', error);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  sendGift: async (giftId, receiverId) => {
+    const token = useAuthStore.getState().token;
+    if (!token) return false;
+
+    try {
+      const response = await fetch(`${API_URL}/api/social/send-gift`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ giftId, receiverId }),
+      });
+
+      if (response.ok) {
+        // Update user balance in auth store
+        const gift = get().gifts.find(g => g.id === giftId);
+        if (gift) {
+          const user = useAuthStore.getState().user;
+          if (user) {
+            useAuthStore.getState().updateUser({ 
+              balance: (user.balance || 0) - gift.price 
+            });
+          }
+        }
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Send gift error:', error);
+      return false;
+    }
+  }
+}));
 
 // Profile Store
 interface ProfileState {
@@ -283,7 +412,7 @@ interface MessagesState {
   isLoading: boolean;
   fetchConversations: () => Promise<void>;
   fetchMessages: (conversationId: string) => Promise<void>;
-  sendMessage: (receiverId: string, content: string) => Promise<boolean>;
+  sendMessage: (receiverId: string, content: string, type?: Message['type'], mediaUrl?: string) => Promise<boolean>;
   setCurrentConversation: (conversation: Conversation | null) => void;
 }
 
@@ -305,12 +434,14 @@ export const useMessagesStore = create<MessagesState>()((set) => ({
     set({ isLoading: false });
   },
   
-  sendMessage: async (receiverId, content) => {
+  sendMessage: async (receiverId, content, type = 'text', mediaUrl) => {
     const newMessage: Message = {
       id: Math.random().toString(36).substr(2, 9),
       senderId: 'current-user',
       receiverId,
       content,
+      type,
+      mediaUrl,
       createdAt: new Date(),
       isRead: false,
     };
