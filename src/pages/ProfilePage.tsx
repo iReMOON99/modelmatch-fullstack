@@ -60,9 +60,25 @@ export function ProfilePage() {
 
   useEffect(() => {
     if (id) {
-      fetchProfile(id);
+      fetchProfile(id).then(data => {
+        if (data) {
+          if (data.role === 'model' && data.modelProfile) {
+            setEditData({ name: data.name, modelProfile: { ...data.modelProfile } });
+          } else if (data.role === 'agency' && data.agencyProfile) {
+            setEditData({ name: data.name, agencyProfile: { ...data.agencyProfile } });
+          }
+        }
+      });
     } else if (currentUser) {
-      fetchProfile(currentUser.id);
+      fetchProfile(currentUser.id).then(data => {
+        if (data) {
+          if (data.role === 'model' && data.modelProfile) {
+            setEditData({ name: data.name, modelProfile: { ...data.modelProfile } });
+          } else if (data.role === 'agency' && data.agencyProfile) {
+            setEditData({ name: data.name, agencyProfile: { ...data.agencyProfile } });
+          }
+        }
+      });
     }
   }, [id, currentUser?.id]);
 
@@ -285,32 +301,129 @@ export function ProfilePage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 lg:px-8 py-8">
+        {isOwnProfile && (
+          <Card className="mb-8 border-amber-200 bg-amber-50">
+            <CardContent className="p-6">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+                    <Edit2 className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-amber-900">Режим редактирования</h3>
+                    <p className="text-sm text-amber-700">Вы можете изменить свои данные прямо в полях ниже и нажать "Сохранить"</p>
+                  </div>
+                </div>
+                <Button 
+                  className="bg-amber-600 hover:bg-amber-700 text-white px-8"
+                  onClick={handleSaveProfile}
+                  disabled={isProfileLoading}
+                >
+                  {isProfileLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
+                  Сохранить все изменения
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column: Details & Stats */}
           <div className="space-y-6">
             <Card>
               <CardContent className="p-6">
                 <h3 className="font-bold text-lg mb-4">About</h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                  {isModel ? modelProfile?.bio : agencyProfile?.description || 'No bio available'}
-                </p>
                 
-                <div className="space-y-4">
+                {isOwnProfile ? (
+                  <div className="space-y-4">
+                    <div className="grid gap-2">
+                      <Label className="text-xs uppercase text-gray-500 font-bold">О себе</Label>
+                      <Textarea 
+                        className="min-h-[120px] bg-white border-gray-200 focus:border-amber-500"
+                        value={isModel ? editData.modelProfile?.bio : editData.agencyProfile?.description || ''}
+                        onChange={(e) => {
+                          if (isModel) {
+                            setEditData({ ...editData, modelProfile: { ...editData.modelProfile, bio: e.target.value } });
+                          } else {
+                            setEditData({ ...editData, agencyProfile: { ...editData.agencyProfile, description: e.target.value } });
+                          }
+                        }}
+                        placeholder="Расскажите о себе..."
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                    {isModel ? modelProfile?.bio : agencyProfile?.description || 'No bio available'}
+                  </p>
+                )}
+                
+                <div className="space-y-4 mt-6">
                   {isModel ? (
                     <>
                       <div className="flex justify-between items-center py-2 border-b border-gray-100">
                         <span className="text-gray-500 flex items-center gap-2">
-                          <Ruler className="w-4 h-4" /> Height
+                          <Ruler className="w-4 h-4" /> Рост
                         </span>
-                        <span className="font-medium">{modelProfile?.height} cm</span>
+                        {isOwnProfile ? (
+                          <div className="flex items-center gap-2">
+                            <Input 
+                              type="number"
+                              className="w-20 h-8 text-right bg-white"
+                              value={editData.modelProfile?.height || ''}
+                              onChange={(e) => setEditData({ ...editData, modelProfile: { ...editData.modelProfile, height: parseInt(e.target.value) } })}
+                            />
+                            <span className="text-sm text-gray-400">см</span>
+                          </div>
+                        ) : (
+                          <span className="font-medium">{modelProfile?.height} cm</span>
+                        )}
                       </div>
+                      
                       <div className="flex justify-between items-center py-2 border-b border-gray-100">
                         <span className="text-gray-500 flex items-center gap-2">
-                          <Crown className="w-4 h-4" /> Measurements
+                          <Crown className="w-4 h-4" /> Параметры
                         </span>
-                        <span className="font-medium">
-                          {modelProfile?.bust}-{modelProfile?.waist}-{modelProfile?.hips}
+                        {isOwnProfile ? (
+                          <div className="flex items-center gap-1">
+                            <Input 
+                              className="w-12 h-8 p-1 text-center bg-white"
+                              value={editData.modelProfile?.bust || ''}
+                              onChange={(e) => setEditData({ ...editData, modelProfile: { ...editData.modelProfile, bust: parseInt(e.target.value) } })}
+                            />
+                            <span className="text-gray-300">-</span>
+                            <Input 
+                              className="w-12 h-8 p-1 text-center bg-white"
+                              value={editData.modelProfile?.waist || ''}
+                              onChange={(e) => setEditData({ ...editData, modelProfile: { ...editData.modelProfile, waist: parseInt(e.target.value) } })}
+                            />
+                            <span className="text-gray-300">-</span>
+                            <Input 
+                              className="w-12 h-8 p-1 text-center bg-white"
+                              value={editData.modelProfile?.hips || ''}
+                              onChange={(e) => setEditData({ ...editData, modelProfile: { ...editData.modelProfile, hips: parseInt(e.target.value) } })}
+                            />
+                          </div>
+                        ) : (
+                          <span className="font-medium">
+                            {modelProfile?.bust}-{modelProfile?.waist}-{modelProfile?.hips}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span className="text-gray-500 flex items-center gap-2">
+                          <MapPin className="w-4 h-4" /> Локация
                         </span>
+                        {isOwnProfile ? (
+                          <Input 
+                            className="w-32 h-8 text-right bg-white"
+                            value={editData.modelProfile?.location || ''}
+                            onChange={(e) => setEditData({ ...editData, modelProfile: { ...editData.modelProfile, location: e.target.value } })}
+                          />
+                        ) : (
+                          <span className="font-medium">{modelProfile?.location}</span>
+                        )}
                       </div>
                     </>
                   ) : (
@@ -319,9 +432,32 @@ export function ProfilePage() {
                         <span className="text-gray-500 flex items-center gap-2">
                           <Globe className="w-4 h-4" /> Website
                         </span>
-                        <a href={agencyProfile?.website} className="text-amber-600 hover:underline">
-                          {agencyProfile?.website || 'Not set'}
-                        </a>
+                        {isOwnProfile ? (
+                          <Input 
+                            className="w-40 h-8 text-right bg-white"
+                            value={editData.agencyProfile?.website || ''}
+                            onChange={(e) => setEditData({ ...editData, agencyProfile: { ...editData.agencyProfile, website: e.target.value } })}
+                          />
+                        ) : (
+                          <a href={agencyProfile?.website} className="text-amber-600 hover:underline">
+                            {agencyProfile?.website || 'Not set'}
+                          </a>
+                        )}
+                      </div>
+
+                      <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span className="text-gray-500 flex items-center gap-2">
+                          <MapPin className="w-4 h-4" /> Локация
+                        </span>
+                        {isOwnProfile ? (
+                          <Input 
+                            className="w-32 h-8 text-right bg-white"
+                            value={editData.agencyProfile?.location || ''}
+                            onChange={(e) => setEditData({ ...editData, agencyProfile: { ...editData.agencyProfile, location: e.target.value } })}
+                          />
+                        ) : (
+                          <span className="font-medium">{agencyProfile?.location}</span>
+                        )}
                       </div>
                     </>
                   )}
