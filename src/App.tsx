@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { Layout } from '@/components/Layout';
 import { LandingPage } from '@/pages/LandingPage';
 import { LoginPage } from '@/pages/LoginPage';
@@ -157,6 +158,7 @@ function App() {
         {/* Catch all - 404 */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      <SpeedInsights />
     </Router>
   );
 }
