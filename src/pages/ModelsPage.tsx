@@ -296,7 +296,7 @@ export function ModelsPage() {
                     </div>
                   </div>
                   <Avatar className="w-10 h-10">
-                    <AvatarImage src={model.avatar} />
+                    <AvatarImage src={model.avatarUrl} />
                     <AvatarFallback>{model.name.charAt(0)}</AvatarFallback>
                   </Avatar>
                 </div>

@@ -4,19 +4,13 @@ import {
   Users, 
   DollarSign, 
   MessageSquare, 
-  Settings,
   TrendingUp,
   TrendingDown,
   UserCheck,
-  UserX,
   AlertTriangle,
   Search,
   Filter,
   MoreHorizontal,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  ChevronDown,
   Download,
   RefreshCw
 } from 'lucide-react';
@@ -56,7 +50,7 @@ const userGrowthData = [
 ];
 
 export function AdminPage() {
-  const { stats, fetchStats, isLoading } = useAdminStore();
+  const { stats, fetchStats } = useAdminStore();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -289,7 +283,7 @@ export function AdminPage() {
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
                               <Avatar className="w-8 h-8">
-                                <AvatarImage src={user.avatar} />
+                                <AvatarImage src={user.avatarUrl} />
                                 <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                               </Avatar>
                               <div>

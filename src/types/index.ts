@@ -41,7 +41,7 @@ export interface User {
   isEmailVerified: boolean;
   createdAt: Date;
   lastLoginAt?: Date;
-  avatar?: string;
+  avatarUrl?: string;
   name: string;
 }
 

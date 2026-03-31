@@ -159,7 +159,7 @@ export const useAuthStore = create<AuthState>()(
           const data = await response.json();
           const currentUser = get().user;
           if (currentUser) {
-            set({ user: { ...currentUser, avatar: data.avatarUrl } });
+            set({ user: { ...currentUser, avatarUrl: data.avatarUrl } });
           }
           return data.avatarUrl;
         } catch (error) {

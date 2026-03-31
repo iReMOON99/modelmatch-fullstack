@@ -22,7 +22,7 @@ export const mockModels: User[] = [
     isVerified: true,
     isEmailVerified: true,
     createdAt: new Date('2024-01-15'),
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
+    avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
   },
   {
     id: 'model-2',
@@ -34,7 +34,7 @@ export const mockModels: User[] = [
     isVerified: true,
     isEmailVerified: true,
     createdAt: new Date('2024-02-20'),
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop',
   },
   {
     id: 'model-3',
@@ -46,7 +46,7 @@ export const mockModels: User[] = [
     isVerified: true,
     isEmailVerified: true,
     createdAt: new Date('2023-11-10'),
-    avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=400&fit=crop',
+    avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=400&fit=crop',
   },
   {
     id: 'model-4',
@@ -58,7 +58,7 @@ export const mockModels: User[] = [
     isVerified: false,
     isEmailVerified: true,
     createdAt: new Date('2024-03-05'),
-    avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=400&fit=crop',
+    avatarUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=400&fit=crop',
   },
   {
     id: 'model-5',
@@ -70,7 +70,7 @@ export const mockModels: User[] = [
     isVerified: true,
     isEmailVerified: true,
     createdAt: new Date('2024-01-28'),
-    avatar: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&h=400&fit=crop',
+    avatarUrl: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&h=400&fit=crop',
   },
   {
     id: 'model-6',
@@ -82,7 +82,7 @@ export const mockModels: User[] = [
     isVerified: true,
     isEmailVerified: true,
     createdAt: new Date('2023-12-15'),
-    avatar: 'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=400&h=400&fit=crop',
+    avatarUrl: 'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=400&h=400&fit=crop',
   },
 ];
 
@@ -98,7 +98,7 @@ export const mockAgencies: User[] = [
     isVerified: true,
     isEmailVerified: true,
     createdAt: new Date('2023-10-01'),
-    avatar: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=400&h=400&fit=crop',
+    avatarUrl: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=400&h=400&fit=crop',
   },
   {
     id: 'agency-2',
@@ -110,7 +110,7 @@ export const mockAgencies: User[] = [
     isVerified: true,
     isEmailVerified: true,
     createdAt: new Date('2023-11-15'),
-    avatar: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=400&fit=crop',
+    avatarUrl: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=400&fit=crop',
   },
   {
     id: 'agency-3',
@@ -122,7 +122,7 @@ export const mockAgencies: User[] = [
     isVerified: true,
     isEmailVerified: true,
     createdAt: new Date('2023-09-20'),
-    avatar: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=400&fit=crop',
+    avatarUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=400&fit=crop',
   },
   {
     id: 'agency-4',
@@ -134,7 +134,7 @@ export const mockAgencies: User[] = [
     isVerified: true,
     isEmailVerified: true,
     createdAt: new Date('2024-01-10'),
-    avatar: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=400&fit=crop',
+    avatarUrl: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=400&fit=crop',
   },
 ];
 

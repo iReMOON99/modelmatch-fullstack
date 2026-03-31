@@ -9,8 +9,6 @@ import {
   Share2,
   CheckCircle2,
   Globe,
-  Instagram,
-  Lock,
   Wallet,
   Send,
   Crown,
@@ -29,7 +27,7 @@ import { Label } from '@/components/ui/label';
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { useAuthStore, useFavoritesStore, useBalanceStore, useProfileStore } from '@/store';
-import type { UserRole, ModelProfile, AgencyProfile } from '@/types';
+import type { UserRole } from '@/types';
 
 export function ProfilePage() {
   const { id } = useParams<{ id: string }>();
@@ -86,8 +84,9 @@ export function ProfilePage() {
   const user = isOwnProfile ? currentUser : (fetchedModelProfile || fetchedAgencyProfile ? {
     id: id!,
     name: fetchedModelProfile?.name || fetchedAgencyProfile?.name || 'User',
+    email: '', // Fallback email
     role: fetchedModelProfile ? 'model' : 'agency' as UserRole,
-    avatar: '', // We'll use profile photos or avatarUrl if available
+    avatarUrl: '', // We'll use profile photos or avatarUrl if available
     isVerified: true,
   } : null);
 

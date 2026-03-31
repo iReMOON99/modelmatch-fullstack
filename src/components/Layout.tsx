@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Menu, 
-  X, 
   Search, 
   MessageSquare, 
   Bell, 
@@ -15,7 +14,6 @@ import {
   Users,
   Building2,
   Heart,
-  Eye,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -29,7 +27,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { useAuthStore, useNotificationsStore, useUIStore } from '@/store';
+import { useAuthStore, useNotificationsStore } from '@/store';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -38,7 +36,6 @@ interface LayoutProps {
 export function Layout({ children }: LayoutProps) {
   const { user, logout } = useAuthStore();
   const { unreadCount } = useNotificationsStore();
-  const { sidebarOpen } = useUIStore();
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -134,7 +131,7 @@ export function Layout({ children }: LayoutProps) {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="flex items-center gap-2">
                       <Avatar className="w-8 h-8">
-                        <AvatarImage src={user.avatar} />
+                        <AvatarImage src={user.avatarUrl} />
                         <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <span className="hidden sm:inline text-sm font-medium">

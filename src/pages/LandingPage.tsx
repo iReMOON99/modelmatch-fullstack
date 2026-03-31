@@ -7,7 +7,6 @@ import {
   Star, 
   Zap, 
   Shield, 
-  Globe,
   ArrowRight,
   CheckCircle2,
   Camera,

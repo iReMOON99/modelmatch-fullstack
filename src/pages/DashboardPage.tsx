@@ -18,9 +18,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuthStore, useRequestsStore } from '@/store';
-import { mockRequests, mockModels, mockAgencies, getUserById } from '@/data/mock';
+import { mockRequests, getUserById } from '@/data/mock';
 
 export function DashboardPage() {
   const navigate = useNavigate();
@@ -195,7 +194,7 @@ export function DashboardPage() {
                       >
                         <div className="flex items-center gap-3">
                           <Avatar className="w-10 h-10">
-                            <AvatarImage src={otherUser?.avatar} />
+                            <AvatarImage src={otherUser?.avatarUrl} />
                             <AvatarFallback>{otherUser?.name.charAt(0)}</AvatarFallback>
                           </Avatar>
                           <div>
@@ -254,7 +253,7 @@ export function DashboardPage() {
             <CardContent className="p-6">
               <div className="text-center">
                 <Avatar className="w-20 h-20 mx-auto mb-4">
-                  <AvatarImage src={user.avatar} />
+                  <AvatarImage src={user.avatarUrl} />
                   <AvatarFallback className="text-2xl">{user.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <h3 className="font-semibold text-lg">{user.name}</h3>

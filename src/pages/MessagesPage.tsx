@@ -5,11 +5,9 @@ import {
   MoreVertical, 
   Phone, 
   Video,
-  Paperclip,
   Smile,
   CheckCheck,
   ArrowLeft,
-  Gift as GiftIcon,
   Image as ImageIcon,
   Loader2
 } from 'lucide-react';
@@ -123,7 +121,7 @@ export function MessagesPage() {
               >
                 <div className="relative">
                   <Avatar className="w-12 h-12">
-                    <AvatarImage src={conv.otherUser?.avatar} />
+                    <AvatarImage src={conv.otherUser?.avatarUrl} />
                     <AvatarFallback>{conv.otherUser?.name.charAt(0)}</AvatarFallback>
                   </Avatar>
                   {conv.unreadCount && conv.unreadCount > 0 && (
@@ -176,7 +174,7 @@ export function MessagesPage() {
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <Avatar className="w-10 h-10">
-                <AvatarImage src={otherUser.avatar} />
+                <AvatarImage src={otherUser.avatarUrl} />
                 <AvatarFallback>{otherUser.name.charAt(0)}</AvatarFallback>
               </Avatar>
               <div>
