@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const prisma = require('./lib/prisma');
+const { upload } = require('./lib/cloudinary');
 
 dotenv.config();
 
@@ -14,30 +15,25 @@ app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-for-dev';
 
+// Middleware to authenticate JWT
+const authenticate = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+};
+
 app.get('/', (req, res) => {
   res.json({ message: 'Backend is working' });
-});
-
-app.get('/api/test-db', async (req, res) => {
-  try {
-    const users = await prisma.user.findMany({
-      select: {
-        id: true,
-        email: true,
-        role: true,
-      },
-    });
-
-    res.json({
-      message: 'Database connection works',
-      users,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: 'Database query failed',
-    });
-  }
 });
 
 // Auth Endpoints
@@ -60,7 +56,7 @@ app.post('/api/auth/register', async (req, res) => {
         email,
         passwordHash,
         role: role.toUpperCase(),
-        // We can extend this to create profiles automatically based on role
+        name: name || email.split('@')[0]
       },
     });
 
@@ -73,7 +69,7 @@ app.post('/api/auth/register', async (req, res) => {
         id: user.id,
         email: user.email,
         role: user.role.toLowerCase(),
-        name: name || user.email.split('@')[0]
+        name: user.name
       }
     });
   } catch (error) {
@@ -109,7 +105,8 @@ app.post('/api/auth/login', async (req, res) => {
         id: user.id,
         email: user.email,
         role: user.role.toLowerCase(),
-        name: user.email.split('@')[0] // Fallback name
+        name: user.name,
+        avatarUrl: user.avatarUrl
       }
     });
   } catch (error) {
@@ -118,8 +115,86 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3001;
+// Profile & Social Endpoints
+app.post('/api/user/avatar', authenticate, upload.single('avatar'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image uploaded' });
+    }
 
+    const updatedUser = await prisma.user.update({
+      where: { id: req.user.userId },
+      data: { avatarUrl: req.file.path },
+    });
+
+    res.json({ avatarUrl: updatedUser.avatarUrl });
+  } catch (error) {
+    console.error('Avatar upload error:', error);
+    res.status(500).json({ error: 'Failed to upload avatar' });
+  }
+});
+
+app.get('/api/social/gifts', async (req, res) => {
+  try {
+    const gifts = await prisma.gift.findMany({ where: { isActive: true } });
+    res.json(gifts);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch gifts' });
+  }
+});
+
+app.post('/api/social/send-gift', authenticate, async (req, res) => {
+  const { giftId, receiverId } = req.body;
+  try {
+    const gift = await prisma.gift.findUnique({ where: { id: giftId } });
+    const sender = await prisma.user.findUnique({ where: { id: req.user.userId } });
+
+    if (sender.balance < gift.price) {
+      return res.status(400).json({ error: 'Insufficient balance' });
+    }
+
+    const [userGift] = await prisma.$transaction([
+      prisma.userGift.create({
+        data: {
+          giftId,
+          senderId: req.user.userId,
+          receiverId,
+        }
+      }),
+      prisma.user.update({
+        where: { id: req.user.userId },
+        data: { balance: { decrement: gift.price } }
+      }),
+      prisma.message.create({
+        data: {
+          senderId: req.user.userId,
+          receiverId,
+          type: 'GIFT',
+          giftId,
+          content: `Sent a gift: ${gift.name}`
+        }
+      })
+    ]);
+
+    res.json(userGift);
+  } catch (error) {
+    console.error('Send gift error:', error);
+    res.status(500).json({ error: 'Failed to send gift' });
+  }
+});
+
+app.get('/api/social/stickers', async (req, res) => {
+  try {
+    const packs = await prisma.stickerPack.findMany({
+      include: { stickers: true }
+    });
+    res.json(packs);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch stickers' });
+  }
+});
+
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
